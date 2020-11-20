@@ -5,6 +5,7 @@ Module for creating and drawing the main stars
 import pygame
 from pygame.locals import *
 from random import randint
+import planets
 
 starColours = pygame.image.load("starGradient.png") # Loads star colours from file
 
@@ -15,9 +16,9 @@ class star:
     def __init__(self, maxX, maxY, allStars):
 
         self.temp = randint(0, 29) # encoded using temp = (T-3000) / 10000
-        self.size = randint(30, 50 + (self.temp * 2)) # Creates size, slightly influenced by temperature
+        self.size = randint(30, 50 + (self.temp * 2)) # Creates size, slightly influenced by temperature (30, 110)
 
-        self.exclusionRadius = self.size * 10 # Radius that no other stars can be within
+        self.exclusionRadius = self.size * 20 # Radius that no other stars can be within
 
         placed = False
         while not placed: # Repeats until valid location found
@@ -64,9 +65,21 @@ class star:
             v = v.rotate(angle) # Rotates to required angle
             self.flairs.append(v)
 
-            angle += randint(5, 20)
+            angle += randint(5, 15)
 
-    def draw(self, screen, cameraPos, screenSize):
+        # Create planets
+        self.planets = []
+        maxPlanets = 2
+        if self.size > 50:
+            maxPlanets = 3
+        elif self.size > 80:
+            maxPlanets = 4
+
+        for i in range(maxPlanets):
+
+            self.planets.append(planets.planet(self))
+
+    def draw(self, screen, cameraPos, screenSize, simulationSpeed):
 
         drawX = self.x - cameraPos[0] + (screenSize[0] / 2) # centre of star
         drawY = self.y - cameraPos[1] + (screenSize[1] / 2)
@@ -99,3 +112,7 @@ class star:
             pygame.draw.polygon(screen, self.colour, flairPoints)
 
             screen.blit(self.surface, (drawX - self.size, drawY - self.size)) # Draws main surface
+
+        # draws planets
+        for planet in self.planets:
+            planet.draw(screen, cameraPos, screenSize, self, simulationSpeed)
