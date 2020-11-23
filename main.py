@@ -51,6 +51,8 @@ def updateZoom(): # Updates the screen when the zoom changes
     screenSize = [windowSize[0] / zoom, windowSize[1] / zoom] # Creates a smaller surface is zoomed in
     screen = pygame.Surface(screenSize)
 
+title_surf = titleFont.render("UNIVERSE SIMULATOR", False, (255, 255, 255))
+msg_cache = {}  # store message surfaces so that they only need to be rendered once
 running = True
 while running:
 
@@ -196,17 +198,21 @@ while running:
     # Messages
     if messageTimer > 0:
         messageTimer -= 1
-        l = gameFont.render(message, False, (255, 255, 255), (0,0,0))
-        mainScreen.blit(l, (10, windowSize[1] - 10 - l.get_height()))
+        msg_surf = msg_cache.get(message)
+        if msg_surf is None:
+            msg_surf = gameFont.render(message, False, (255, 255, 255), (0, 0, 0))
+            msg_cache[message] = msg_surf
+        
+        mainScreen.blit(msg_surf, (10, windowSize[1] - 10 - msg_surf.get_height()))
 
     # Title
     if (titleTimer < fps * 5 and titleOn) or (titleOn and fps < 10):
         titleTimer += 1
 
-        l = titleFont.render("UNIVERSE SIMULATOR", False, (255,255,255))
-        x = windowSize[0]/2 - l.get_width()/2
-        y = windowSize[1]/2 - l.get_height()/2
-        mainScreen.blit(l, (x, y))
+        # l = titleFont.render("UNIVERSE SIMULATOR", False, (255,255,255))
+        x = windowSize[0]/2 - title_surf.get_width()/2
+        y = windowSize[1]/2 - title_surf.get_height()/2
+        mainScreen.blit(title_surf, (x, y))
 
     else:
         titleOn = False
