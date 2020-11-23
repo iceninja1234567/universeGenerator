@@ -203,7 +203,7 @@ while running:
             msg_surf = gameFont.render(message, False, (255, 255, 255), (0, 0, 0))
             msg_cache[message] = msg_surf
         
-        mainScreen.blit(msg_surf, (10, windowSize[1] - 10 - l.get_height()))
+        mainScreen.blit(msg_surf, (10, windowSize[1] - 10 - msg_surf.get_height()))
 
     # Title
     if (titleTimer < fps * 5 and titleOn) or (titleOn and fps < 10):
