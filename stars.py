@@ -48,12 +48,16 @@ class star:
         pygame.draw.circle(self.surface, self.colour, (self.size, self.size), self.size) # Draws base circle
 
         # add dark spots
+        surf = pygame.PixelArray(self.surface)
         for x in range(0, self.size * 2): # Goes through each pixel on the circle
             for y in range(0, self.size * 2):
-
-                if self.surface.get_at((x, y))[3] != 0: # if not transparent
+                px = surf[x][y]  # get mapped color `int` at coordinates x, y
+                rgba = self.surface.unmap_rgb(px)  # convert mapped color `int` to rgba tuple
+                if rgba[3] != 0: # if not transparent
                     if randint(0,3) == 0:
-                        self.surface.set_at((x, y), self.darkColour) # Randomly darkens some pixels
+                        surf[x][y] = self.darkColour
+
+        self.surface = surf.make_surface()  # recreate surface with new pixels
 
         # flares
         self.flairs = []
